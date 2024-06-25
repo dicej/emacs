@@ -1958,8 +1958,8 @@ ns_set_transparent_titlebar (struct frame *f, Lisp_Object new_value,
   if ([window respondsToSelector: @selector(titlebarAppearsTransparent)]
       && !EQ (new_value, old_value))
     {
-      window.titlebarAppearsTransparent = !NILP (new_value);
-      FRAME_NS_TRANSPARENT_TITLEBAR (f) = !NILP (new_value);
+        window.titlebarAppearsTransparent = true;//!NILP (new_value);
+        FRAME_NS_TRANSPARENT_TITLEBAR (f) = true;//!NILP (new_value);
     }
 #endif /* MAC_OS_X_VERSION_MAX_ALLOWED >= 101000 */
 }
@@ -9102,7 +9102,8 @@ ns_in_echo_area (void)
     styleMask = 0;
   else
     styleMask = (NSWindowStyleMaskTitled
-		 | NSWindowStyleMaskResizable
+                 | NSFullSizeContentViewWindowMask
+                 | NSWindowStyleMaskResizable
 		 | NSWindowStyleMaskMiniaturizable
 		 | NSWindowStyleMaskClosable);
 
@@ -9122,6 +9123,33 @@ ns_in_echo_area (void)
       NSColor *col;
       NSScreen *screen = [self screen];
       EmacsView *view = FRAME_NS_VIEW (f);
+
+      self.titlebarAppearsTransparent = true;
+      self.titleVisibility = NSWindowTitleHidden;
+      {
+          NSButton *button = [self standardWindowButton: NSWindowFullScreenButton];
+          if (button) {
+              button.hidden = true;
+          }
+      }
+      {
+          NSButton *button = [self standardWindowButton: NSWindowMiniaturizeButton];
+          if (button) {
+              button.hidden = true;
+          }
+      }
+      {
+          NSButton *button = [self standardWindowButton: NSWindowCloseButton];
+          if (button) {
+              button.hidden = true;
+          }
+      }
+      {
+          NSButton *button = [self standardWindowButton: NSWindowZoomButton];
+          if (button) {
+              button.hidden = true;
+          }
+      }
 
       [self setDelegate:view];
       [[self contentView] addSubview:view];
@@ -9147,7 +9175,7 @@ ns_in_echo_area (void)
 
 #if defined (NS_IMPL_COCOA) && MAC_OS_X_VERSION_MAX_ALLOWED >= 101000
       if ([self respondsToSelector:@selector(titlebarAppearsTransparent)])
-        [self setTitlebarAppearsTransparent:FRAME_NS_TRANSPARENT_TITLEBAR (f)];
+        [self setTitlebarAppearsTransparent: true];
 #endif
 
       [self setParentChildRelationships];
@@ -9195,7 +9223,7 @@ ns_in_echo_area (void)
 
 - (void)createToolbar: (struct frame *)f
 {
-  if (FRAME_UNDECORATED (f) || !FRAME_EXTERNAL_TOOL_BAR (f) || [self toolbar] != nil)
+  if (true || FRAME_UNDECORATED (f) || !FRAME_EXTERNAL_TOOL_BAR (f) || [self toolbar] != nil)
     return;
 
   EmacsView *view = (EmacsView *)FRAME_NS_VIEW (f);
