@@ -8808,7 +8808,7 @@ from the list of completions and default values."
               (setq-local icomplete-with-completion-tables
                           (cons rbts-completion-table
                                 icomplete-with-completion-tables))))
-      (read-buffer prompt (other-buffer (current-buffer))
+      (read-buffer prompt (other-buffer (current-buffer) t)
                    (confirm-nonexistent-file-or-buffer)))))
 
 (defun window-normalize-buffer-to-switch-to (buffer-or-name)
